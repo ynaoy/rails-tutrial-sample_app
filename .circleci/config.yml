@@ -42,7 +42,7 @@ jobs:
           command: bundle exec rails db:migrate
       - run:
           name: test
-          command: rails test
+          command: bundle exec rake test
   deploy:
       docker:
           - image: circleci/ruby:2.7

@@ -16,3 +16,4 @@ src/log/*
 # Ignore Byebug command history file.
 src/.byebug_history
 src/db/mysql_data
+src/public/uploads

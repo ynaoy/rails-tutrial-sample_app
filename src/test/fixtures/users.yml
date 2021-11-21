@@ -1,15 +1,31 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 michael:
-  name: Michael Example
+  name: Michael_Example
   email: michael@example.com
   password_digest: <%= User.digest('password') %>
   admin: true
   activated: true
   activated_at: <%= Time.zone.now.to_s(:db) %>
 
+not_e:
+  name: aaaa
+  email: aaaa@example.com
+  password_digest: <%= User.digest('password') %>
+  admin: true
+  activated: true
+  activated_at: <%= Time.zone.now.to_s(:db) %>
+
+mhartl:
+  name: Mhartl_Example
+  email: mhartl@example.com
+  password_digest: <%= User.digest('password') %>
+  admin: true
+  activated: false
+  activated_at: <%= Time.zone.now.to_s(:db) %>
+
 micha:
-  name: Micha Example
+  name: Micha_Example
   email: micha@example.com
   password_digest: <%= User.digest('password') %>
   admin: true
@@ -17,21 +33,21 @@ micha:
   #activated_at: <%= Time.zone.now.to_s(:db) %>
 
 archer:
-  name: Sterling Archer
+  name: Sterling_Archer
   email: duchess@example.gov
   password_digest: <%= User.digest('password') %>
   activated: true
   activated_at: <%= Time.zone.now.to_s(:db) %>
 
 lana:
-  name: Lana Kane
+  name: Lana_Kane
   email: hands@example.gov
   password_digest: <%= User.digest('password') %>
   activated: true
   activated_at: <%= Time.zone.now.to_s(:db) %>
 
 malory:
-  name: Malory Archer
+  name: Malory_Archer
   email: boss@example.gov
   password_digest: <%= User.digest('password') %>
   activated: true
@@ -39,7 +55,7 @@ malory:
 
 <% 30.times do |n| %>
 user_<%= n %>:
-  name:  <%= "User #{n}" %>
+  name:  <%= "User_#{n}" %>
   email: <%= "user-#{n}@example.com" %>
   password_digest: <%= User.digest('password') %>
   activated: true

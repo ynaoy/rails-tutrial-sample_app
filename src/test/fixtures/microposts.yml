@@ -8,6 +8,16 @@ tau_manifesto:
   created_at: <%= 3.years.ago.to_s(:db) %>
   user: michael
 
+not_t:
+  content: "aaaa"
+  created_at: <%= 10.minutes.ago.to_s(:db) %>
+  user: michael
+
+michael_to_mhartl:
+  content: "test @mhartl"
+  created_at: <%= 3.years.ago.to_s(:db) %>
+  user: michael
+
 cat_video:
   content: "Sad cats are sad: http://youtu.be/PKffm2uI4dk"
   created_at: <%= 2.hours.ago.to_s(:db) %>

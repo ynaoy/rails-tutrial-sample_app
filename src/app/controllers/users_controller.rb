@@ -5,14 +5,22 @@ before_action :correct_user,   only: [:edit, :update]
 before_action :admin_user,     only: :destroy
 
   def index
-    @users = User.where(activated: true).paginate(page: params[:page])
-    @users = User.paginate(page: params[:page])
+    @users = User.search_user.paginate(page: params[:page])
+    #@users = User.paginate(page: params[:page])
+    respond_to do |format|
+      format.html
+      format.json { render json: @users, status: 200 }
+    end
   end
 
   def show
     @user = User.find(params[:id])
     @microposts = @user.microposts.paginate(page: params[:page])
     redirect_to root_url and return unless @user.activated?
+    respond_to do |format|
+      format.html
+      format.json { render json: {user: @user, micropost: @microposts}, status: 200 }
+    end
   end
 
   def new
@@ -22,11 +30,19 @@ before_action :admin_user,     only: :destroy
   def create
     @user = User.new(user_params)
     if @user.save
-      @user.send_activation_email
-      flash[:info] = "Please check your email to activate your account."
-      redirect_to root_url
+      respond_to do |format|
+        format.html do
+          @user.send_activation_email
+          flash[:info] = "Please check your email to activate your account."
+          redirect_to root_url
+        end
+        format.json { render json: @user, status: 200 }
+      end
     else
-      render 'new'
+      respond_to do |format|
+        format.html { render 'new'}
+        format.json { render json: @user.errors, status: 400}
+      end
     end
   end
 
@@ -37,10 +53,18 @@ before_action :admin_user,     only: :destroy
   def update
     @user = User.find(params[:id])
     if @user.update_attributes(user_params)
-      flash[:success] = "Profile updated"
-      redirect_to @user
+      respond_to do |format|
+        format.html do
+          flash[:success] = "Profile updated"
+          redirect_to @user
+        end
+        format.json { render json: @user, status: 200 }
+      end
     else
-      render 'edit'
+      respond_to do |format|
+        format.html { render 'edit'}
+        format.json { render json: @user.errors, status: 400}
+      end
     end
   end
 
@@ -54,15 +78,24 @@ before_action :admin_user,     only: :destroy
     @title = "Following"
     @user  = User.find(params[:id])
     @users = @user.following.paginate(page: params[:page])
-    render 'show_follow'
+    respond_to do |format|
+      format.html{ render 'show_follow'}
+      format.json{ render json: @users, status: 200 }
+    end
+    #render 'show_follow'
   end
 
   def followers
     @title = "Followers"
     @user  = User.find(params[:id])
     @users = @user.followers.paginate(page: params[:page])
-    render 'show_follow'
+    respond_to do |format|
+      format.html{ render 'show_follow'}
+      format.json{ render json: @users, status: 200 }
+    end
+    #render 'show_follow'
   end
+
   private
 
     def user_params

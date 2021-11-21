@@ -1,0 +1,6 @@
+<% @user ||= current_user %>
+<% if @user.notice?("follower") %>
+  <%= render'shared/not_notice_follower' %>
+<% else %>
+  <%= render'shared/notice_follower' %>
+<% end %>

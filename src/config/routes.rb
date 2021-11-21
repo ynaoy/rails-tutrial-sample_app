@@ -1,4 +1,8 @@
 Rails.application.routes.draw do
+  get 'search_microposts/index'
+
+  get 'search_users/index'
+
   get 'sessions/new'
 
   get 'users/new'
@@ -12,6 +16,11 @@ Rails.application.routes.draw do
   get  '/login',   to: 'sessions#new'
   post '/login',   to: 'sessions#create'
   delete '/logout',  to: 'sessions#destroy'
+  patch '/notice_follow',   to: 'notice_followers#create'
+  delete '/notice_follow',  to: 'notice_followers#destroy'
+  get '/rss/:id', to: 'rsss#index', as: 'rss', defaults: { format: :rss }
+  post '/search_users',   to: 'search_users#index'
+  post '/search_microposts',   to: 'search_microposts#index'
   resources :users do
     member do
       get :following, :followers

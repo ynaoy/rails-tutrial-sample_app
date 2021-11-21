@@ -1,0 +1,9 @@
+<% @user ||= current_user %>
+<div class="row">
+  <div class="col-md-offset-5">
+    <%= form_tag(search_users_path, method: :post, remote: true, class:"form-inline") do |f| %>
+      <%= search_field_tag("search",nil, class: "form-control col-md-2") %>
+      <%= submit_tag("検索", class: "btn btn-primary col-md-1") %>
+    <% end %>
+  </div>
+</div>

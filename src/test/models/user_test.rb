@@ -3,7 +3,7 @@ require 'test_helper'
 class UserTest < ActiveSupport::TestCase
 
   def setup
-    @user = User.new(name: "Example User", email: "user@example.com",
+    @user = User.new(name: "Example_User", email: "user@example.com",
                      password: "foobar", password_confirmation: "foobar")
   end
 
@@ -24,6 +24,22 @@ class UserTest < ActiveSupport::TestCase
   test "name should not be too long" do
     @user.name = "a" * 51
     assert_not @user.valid?
+  end
+
+  test "name validation should accept valid name" do
+    valid_names = ["tanaka_tarou","tanaka_kouzi"]
+    valid_names.each do |valid_name|
+      @user.name = valid_name
+      assert @user.valid?, "#{valid_name.inspect} should be valid"
+    end
+  end
+
+  test "name validation should reject invalidname" do
+    invalid_names = ["tanaka tarou","tanaka\　tarou"]
+    invalid_names.each do |invalid_name|
+      @user.name = invalid_name
+      assert_not @user.valid?, "#{invalid_name.inspect} should be invalid"
+    end
   end
 
   test "email should not be too long" do

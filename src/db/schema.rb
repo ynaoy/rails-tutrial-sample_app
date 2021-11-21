@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20211030173915) do
+ActiveRecord::Schema.define(version: 20211116061422) do
 
   create_table "microposts", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3" do |t|
     t.text     "content",    limit: 65535
@@ -32,6 +32,15 @@ ActiveRecord::Schema.define(version: 20211030173915) do
     t.index ["follower_id"], name: "index_relationships_on_follower_id", using: :btree
   end
 
+  create_table "replays", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3" do |t|
+    t.string   "replay_to"
+    t.string   "replay_from"
+    t.integer  "micropost_id"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+    t.index ["micropost_id", "created_at"], name: "index_replays_on_micropost_id_and_created_at", using: :btree
+  end
+
   create_table "users", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3" do |t|
     t.string   "name"
     t.string   "email"
@@ -45,6 +54,7 @@ ActiveRecord::Schema.define(version: 20211030173915) do
     t.datetime "activated_at"
     t.string   "reset_digest"
     t.datetime "reset_sent_at"
+    t.boolean  "follower_notice",   default: true
     t.index ["email"], name: "index_users_on_email", unique: true, using: :btree
   end
 

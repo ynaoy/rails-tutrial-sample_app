@@ -242,7 +242,11 @@ input {
 }
 
 /* microposts */
-
+.search_form{
+  padding-top:14px;
+  padding-bottom:0;
+  margin-bottom:0;
+}
 .microposts {
   list-style: none;
   padding: 0;

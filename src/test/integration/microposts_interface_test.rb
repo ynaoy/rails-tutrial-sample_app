@@ -20,7 +20,7 @@ class MicropostsInterfaceTest < ActionDispatch::IntegrationTest
     content = "This micropost really ties the room together"
     picture = fixture_file_upload('test/fixtures/rails.png', 'image/png')
     assert_difference 'Micropost.count', 1 do
-     post microposts_path, micropost: { content: content, picture: picture }
+     post microposts_path, params: { micropost: { content: content, picture: picture } }
     end
     assert assigns(:micropost).picture?
     #assert_redirected_to root_url
@@ -54,5 +54,18 @@ class MicropostsInterfaceTest < ActionDispatch::IntegrationTest
     other_user.microposts.create!(content: "A micropost")
     get root_path
     assert_match "1 micropost", response.body
+  end
+
+  test "micropost replaied" do
+    log_in_as(@user)
+    other_user = users(:malory)
+    content = "@#{other_user.name} ok?"
+    get root_path
+    assert_difference "Micropost.count" do
+      post microposts_path, params: { micropost: { content: content } }
+    end
+    log_in_as(other_user)
+    get root_path
+    assert_match content , response.body
   end
 end

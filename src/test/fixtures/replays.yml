@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  replay_to: 
+  replay_from: 
+  micropost_id: 1
+
+two:
+  replay_to: 
+  replay_from: 
+  micropost_id: 1

@@ -1,0 +1,2 @@
+module NoticeFollowersHelper
+end

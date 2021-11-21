@@ -5,6 +5,15 @@ class MicropostsController < ApplicationController
   def create
     @micropost = current_user.microposts.build(micropost_params)
     if @micropost.save
+      if @micropost.is_replay?
+        @micropost.replay_users.each do |rep|
+          replay_params = {replay_to: rep[1..],
+                           replay_from: current_user.name,
+                           micropost_id: @micropost.id}
+          @replay = @micropost.replays.build(replay_params)
+          @replay.save
+        end
+      end
       flash[:success] = "Micropost created!"
       redirect_to root_url
     else

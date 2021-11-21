@@ -11,7 +11,10 @@ class User < ApplicationRecord
   attr_accessor :remember_token, :activation_token, :reset_token
   before_save   :downcase_email
   before_create :create_activation_digest
-  validates :name,  presence: true, length: { maximum: 50 }
+  VALID_NAME_REGEX = /\A(?!.*\p{blank}).+\z/
+  validates :name,  presence: true, length: { maximum: 50 },
+                    format: { with: VALID_NAME_REGEX },
+                    uniqueness: true
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i
   validates :email, presence: true, length: { maximum: 255 },
                     format: { with: VALID_EMAIL_REGEX },
@@ -84,8 +87,10 @@ class User < ApplicationRecord
   def feed
     following_ids = "SELECT followed_id FROM relationships
                      WHERE follower_id = :user_id"
-    Micropost.where("user_id IN (#{following_ids})
-                     OR user_id = :user_id", user_id: id)
+    replay_ids= "SELECT micropost_id FROM replays
+                WHERE replay_to = :user_name"
+    Micropost.where("user_id IN (#{following_ids}) OR id IN (#{replay_ids})
+                     OR user_id = :user_id", user_id: id, user_name: name)
   end
 
   # ユーザーをフォローする
@@ -101,6 +106,30 @@ class User < ApplicationRecord
   # 現在のユーザーがフォローしてたらtrueを返す
   def following?(other_user)
     following.include?(other_user)
+  end
+
+  # ユーザーがフォローされたときにメールで通知する
+  def notice_follow
+    update_attribute(:follower_notice, true)
+  end
+
+  # ユーザーがフォローされたときにメールで通知しない
+  def not_notice_follow
+    update_attribute(:follower_notice, false)
+  end
+
+  # "#{attribute}_notice"を返す
+  def notice?(attribute)
+    notice = send("#{attribute}_notice")
+  end
+
+  # Userのattributeをstrで検索する
+  def User.search_user(attribute = nil,str = nil)
+    if attribute && str
+      User.where("#{attribute} LiKE ? AND activated=?", "%#{str}%",true)
+    else
+      User.where(activated: true)
+    end
   end
 
   private

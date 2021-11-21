@@ -1,12 +1,5 @@
 <% provide(:title, 'All users') %>
 <h1>All users</h1>
+<%= render "shared/search_users_form" %>
+<%= render "users/show_users" %>
 
-<%= will_paginate %>
-
-<ul class="users">
-  <% @users.each do |user| %>
-    <%= render @users %>
-  <% end %>
-</ul>
-
-<%= will_paginate %>

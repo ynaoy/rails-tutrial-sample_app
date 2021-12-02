@@ -6,7 +6,9 @@ version: 2.1
 # See: https://circleci.com/docs/2.0/orb-intro/
 orbs:
   ruby: circleci/ruby@1.1.2
-  heroku: circleci/heroku@1.2.3
+  #heroku: circleci/heroku@1.2.3
+  aws-ecr: circleci/aws-ecr@6.15
+  aws-ecs: circleci/aws-ecs@2.0.0
 
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
@@ -43,27 +45,6 @@ jobs:
       - run:
           name: test
           command: bundle exec rake test
-  deploy:
-      docker:
-          - image: circleci/ruby:2.7
-      steps:
-          - checkout
-          - setup_remote_docker:
-              version: 19.03.13
-          - heroku/install
-          - run:
-              name: heroku login
-              command: heroku container:login
-          - run:
-              name: push docker image
-              command: heroku container:push web -a $HEROKU_APP_NAME
-          - run:
-              name: release docker image
-              command: heroku container:release web -a $HEROKU_APP_NAME
-          - run:
-              name: database setup
-              command: heroku run bundle exec rake db:migrate RAILS_ENV=production -a $HEROKU_APP_NAME
-
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
@@ -75,9 +56,22 @@ workflows:
       - test:
          requires:
              - build
-      - deploy:
+      - aws-ecr/build-and-push-image:
           requires:
-              - test
+            - test
+          region: AWS_REGION
+          account-url: AWS_ECR_ACCOUNT_URL
+          create-repo: true
+          dockerfile: ./Dockerfile
+          repo: '${MY_APP_PREFIX}-repo'
+          tag: "${CIRCLE_SHA1}"
           filters:
               branches:
                   only: main
+      - aws-ecs/deploy-service-update:
+          requires:
+            - aws-ecr/build-and-push-image
+          family: '${MY_APP_PREFIX}-task'
+          cluster-name: '${MY_APP_PREFIX}-cluster'
+          service-name: '${MY_APP_PREFIX}-service'
+          container-image-name-updates: 'container=${MY_APP_PREFIX}-container,tag=${CIRCLE_SHA1}'
